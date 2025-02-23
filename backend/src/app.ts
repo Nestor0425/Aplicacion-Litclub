@@ -7,6 +7,7 @@ import rateLimit from "express-rate-limit";
 import logger from "./utils/logger";
 import logsRoutes from "./routes/logs.routes";
 import cookieParser from "cookie-parser";
+import dashboardRoutes from "./routes/dashboard.routes";
 
 import morgan from "morgan";
 const app = express();
@@ -50,6 +51,7 @@ app.use(cookieParser());
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/logs", logsRoutes);
+app.use("/dashboard", dashboardRoutes);
 
 
 export default app;
