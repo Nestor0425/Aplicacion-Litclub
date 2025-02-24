@@ -1,0 +1,59 @@
+
+/* 📌 Barra de navegación con fondo degradado */
+.navbar {
+    background-color: white !important;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 3px;
+  }
+  
+  /* 📌 Contenedor de la barra */
+  .navbar-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  /* 📌 Logo/Título */
+  .navbar-title {
+    font-family: "Varela Round", sans-serif !important;
+    font-size: 30px !important;
+    font-weight: bold !important;
+    color: #1e81a6;
+    text-decoration: none;
+  }
+  
+  /* 📌 Contenedor de los botones */
+  .navbar-buttons {
+    display: flex;
+    gap: 15px;
+  }
+  
+  /* 📌 Estilos de los botones (cambio de color) */
+  .navbar-button {
+    font-size: 1rem !important;
+    font-weight: bold;
+    color: #1e81a6 !important; /* ✅ Se asegura que el texto sea blanco */
+    text-transform: none;
+    border-radius: 8px;
+    padding: 8px 15px;
+    transition: all 0.3s ease-in-out;
+    border: 2px solid transparent;
+  }
+  
+  .navbar-button:hover {
+    background: #fdfdfd  !important;
+    border: 2px solid rgb(237, 153, 234)  !important;
+  }
+  
+  /* 📌 Responsive - Para pantallas pequeñas */
+  @media (max-width: 600px) {
+    .navbar-toolbar {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .navbar-buttons {
+      margin-top: 10px;
+    }
+  }
+  
