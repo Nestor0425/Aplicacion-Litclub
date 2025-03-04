@@ -1,0 +1,6 @@
+title,author,genre,description,published_year,cover_image_url,available_file_url
+El Principito,Antoine de Saint-Exupéry,Ficción,Un clásico sobre un niño de otro planeta.,1943,https://example.com/elprincipito.jpg,/uploads/elprincipito.pdf
+1984,George Orwell,Distopía,Una novela sobre un futuro totalitario.,1949,https://example.com/1984.jpg,/uploads/1984.pdf
+Don Quijote,Miguel de Cervantes,Aventura,Las aventuras de un hidalgo que se cree caballero.,1605,https://example.com/donquijote.jpg,/uploads/donquijote.pdf
+Cien Años de Soledad,Gabriel García Márquez,Realismo mágico,La historia de la familia Buendía en Macondo.,1967,https://example.com/cienañosdesoledad.jpg,/uploads/cienañosdesoledad.pdf
+Crónica de una Muerte Anunciada,Gabriel García Márquez,Misterio,Un asesinato contado desde el final.,1981,https://example.com/cronica.jpg,/uploads/cronica.pdf

@@ -8,6 +8,9 @@ import logger from "./utils/logger";
 import logsRoutes from "./routes/logs.routes";
 import cookieParser from "cookie-parser";
 import dashboardRoutes from "./routes/dashboard.routes";
+import bookRoutes from "./routes/book.routes";
+import path from "path";
+
 
 import morgan from "morgan";
 const app = express();
@@ -47,11 +50,29 @@ app.use(morgan("combined", { stream: { write: (message) => logger.info(message.t
 
 app.use(cookieParser());
 
+app.use(express.json());
+
 // Montar las rutas
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/logs", logsRoutes);
 app.use("/dashboard", dashboardRoutes);
+app.use("/books", bookRoutes);
+// Servir archivos estáticos desde la carpeta "uploads"
+// Servir archivos estáticos desde la carpeta "uploads"
+app.use("/uploads", express.static("uploads"));
+
+
+// 🔹 Evitar error "X-Frame-Options"
+// Configurar las cabeceras CSP manualmente
+app.use((req, res, next) => {
+  res.setHeader("Content-Security-Policy", "frame-ancestors 'self' http://localhost:5173");
+  res.setHeader("X-Frame-Options", "ALLOW-FROM http://localhost:5173"); // ❗ Algunos navegadores aún usan esto
+  next();
+});
+
+
+
 
 
 export default app;

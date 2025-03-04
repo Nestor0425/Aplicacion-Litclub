@@ -1,0 +1,17 @@
+.loan-card {
+    transition: transform 0.3s ease-in-out;
+  }
+  .loan-card:hover {
+    transform: scale(1.05);
+  }
+  
+  .loan-returned {
+    color: green;
+    font-weight: bold;
+  }
+  
+  .loan-due {
+    color: red;
+    font-weight: bold;
+  }
+  

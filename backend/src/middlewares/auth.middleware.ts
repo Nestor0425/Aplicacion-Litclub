@@ -66,6 +66,12 @@ export interface AuthenticatedRequest extends Request {
   user?: { id: number; nombre: string; email: string; rol: string };
 }
 
+export interface AuthRequest extends Request {
+  user?: {
+    id: number;
+    rol: string;
+  };
+}
 export const authenticateToken = (req: AuthenticatedRequest, res: Response, next: NextFunction): void => {
   try {
     // ✅ Obtener el token desde el header Authorization

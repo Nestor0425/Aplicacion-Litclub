@@ -1,12 +1,9 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { Button, Container, Typography, Grid, Paper, CircularProgress, Box } from "@mui/material";
+import { Button, Container, Typography, Paper, CircularProgress, Box, TextField, MenuItem, Snackbar, Alert } from "@mui/material";
 import axios from "axios";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from "chart.js";
-import { Bar, Doughnut } from "react-chartjs-2";
-import * as XLSX from "xlsx";
-import { saveAs } from "file-saver";
 
 // ✅ Registrar componentes necesarios de Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
@@ -18,14 +15,66 @@ interface DashboardStats {
   twoFA: number;
 }
 
+interface BookForm {
+  title: string;
+  author: string;
+  genre: string;
+  description: string;
+  published_year: string;
+  file: File | null; // 📌 Añadir el campo "file" para almacenar el PDF
+}
+
+interface Book {
+  id: number;
+  title: string;
+  author: string;
+  cover_image_url: string;
+  genre: string;
+}
+
+interface ApiResponse {
+  message: string;
+}
+
 const Dashboard = () => {
   const { user, logout } = useContext(AuthContext) || { user: null, logout: () => {} };
   const navigate = useNavigate();
-  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [books, setBooks] = useState<Book[]>([]);
+  const [form, setForm] = useState<BookForm>({
+    title: "",
+    author: "",
+    genre: "",
+    description: "",
+    published_year: "",
+    file: null, // Inicializamos el archivo en "null"
+  });
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [snackbarSeverity, setSnackbarSeverity] = useState<"success" | "error">("success");
 
   useEffect(() => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
+    if (user.rol !== "admin") {
+      navigate("/user-dashboard");
+      return;
+    }
+
+    const fetchBooks = async () => {
+      try {
+        const res = await axios.get<Book[]>(`${import.meta.env.VITE_API_URL}/books`);
+        setBooks(res.data);
+      } catch (error) {
+        console.error("Error obteniendo libros:", error);
+      }
+    };
+
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -46,49 +95,75 @@ const Dashboard = () => {
       }
     };
 
+    fetchBooks();
     fetchStats();
-  }, []);
+  }, [navigate, user?.rol]);
 
-  // ✅ Función para Exportar los Datos a Excel
-  const exportToExcel = () => {
-    if (!stats) return;
-
-    const data = [
-      ["Categoría", "Cantidad"],
-      ["Usuarios Registrados", stats.users],
-      ["Inicios de Sesión", stats.logins],
-      ["Intentos Fallidos", stats.failedLogins],
-      ["2FA Enviados", stats.twoFA],
-    ];
-
-    const ws = XLSX.utils.aoa_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Estadísticas");
-
-    const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-    const dataBlob = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8" });
-    saveAs(dataBlob, "dashboard_estadisticas.xlsx");
+  // 📌 Función para manejar cambios en inputs de texto
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  // ✅ Función para Exportar los Datos a CSV
-  const exportToCSV = () => {
-    if (!stats) return;
-
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      "Categoría,Cantidad\n" +
-      `Usuarios Registrados,${stats.users}\n` +
-      `Inicios de Sesión,${stats.logins}\n` +
-      `Intentos Fallidos,${stats.failedLogins}\n` +
-      `2FA Enviados,${stats.twoFA}\n`;
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "dashboard_estadisticas.csv");
-    document.body.appendChild(link);
-    link.click();
+  // 📌 Función para manejar el cambio de archivo
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setForm({ ...form, file: e.target.files[0] });
+    }
   };
+
+  // 📌 Función para agregar un libro con un archivo PDF
+  const handleAddBook = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        alert("Debes iniciar sesión para agregar libros.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("title", form.title);
+      formData.append("author", form.author);
+      formData.append("genre", form.genre);
+      formData.append("description", form.description);
+      formData.append("published_year", form.published_year);
+      if (form.file) {
+        formData.append("file", form.file);
+      }
+
+      const res = await axios.post<ApiResponse>(`${import.meta.env.VITE_API_URL}/books`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      setSnackbarMessage(res.data.message);
+      setSnackbarSeverity("success");
+      setSnackbarOpen(true);
+
+      setForm({
+        title: "",
+        author: "",
+        genre: "",
+        description: "",
+        published_year: "",
+        file: null,
+      });
+    } catch (error) {
+      console.error("❌ Error al agregar el libro:", error);
+      setSnackbarMessage("Error al agregar el libro. Inténtalo de nuevo.");
+      setSnackbarSeverity("error");
+      setSnackbarOpen(true);
+    }
+  };
+
+  const hadleViewLogs = () => {
+    navigate("/logs");
+  };
+
+  
 
   return (
     <Container sx={{ textAlign: "center", marginTop: 5 }}>
@@ -105,90 +180,78 @@ const Dashboard = () => {
         </Typography>
       ) : (
         <>
-          {/* ✅ Botón solo visible para administradores */}
-          {user?.rol === "admin" && (
-            <>
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{ marginTop: 3, marginRight: 2 }}
-                onClick={() => navigate("/logs")}
-              >
-                📜 Monitoreo de Logs
-              </Button>
+        <Box sx={{ marginTop: 3 }}>
+        <Button
+  variant="contained"
+  color="secondary"
+  sx={{ marginTop: 3, marginRight: 2 }}
+  onClick={() => navigate("/upload-books")}
+>
+  📂 Subir Libros CSV
+</Button>
 
-              {/* 📥 Botón para Exportar a Excel */}
-              <Button
-                variant="contained"
-                color="secondary"
-                sx={{ marginTop: 3, marginRight: 2 }}
-                onClick={exportToExcel}
-              >
-                📥 Exportar Excel
-              </Button>
-
-              {/* 📂 Botón para Exportar a CSV */}
-              <Button
-                variant="contained"
-                color="success"
-                sx={{ marginTop: 3 }}
-                onClick={exportToCSV}
-              >
-                📂 Exportar CSV
-              </Button>
-            </>
+        {/* 📌 Botón para ir a la página de edición de libros */}
+        <Button variant="contained" color="primary" onClick={() => navigate("/edit-books")}>
+          ✏️ Editar Libros
+        </Button>
+      </Box>
+        {/* 📌 Botón para ver logs (Solo para administradores) */}
+        {user?.rol === "admin" && (
+            <Button
+              variant="contained"
+              color="secondary"
+              sx={{ marginTop: 3 }}
+              onClick={hadleViewLogs}
+            >
+              📜 Ver Logs
+            </Button>
           )}
-
-          {/* 🔴 Botón de Cerrar Sesión */}
-          <Button
-            variant="contained"
-            color="error"
-            sx={{ marginTop: 3, marginLeft: 2 }}
-            onClick={() => {
-              logout();
-              navigate("/login");
-            }}
-          >
+          <Button variant="contained" color="error" sx={{ marginTop: 3 }} onClick={() => { logout(); navigate("/login"); }}>
             🚪 Cerrar Sesión
           </Button>
 
-          {/* 📊 Gráficos de Estadísticas */}
-          <Grid container spacing={4} sx={{ marginTop: 5 }}>
-            <Grid item xs={12} md={6}>
-              <Paper sx={{ padding: 3 }}>
-                <Typography variant="h6">Usuarios y Logins</Typography>
-                <Bar
-                  data={{
-                    labels: ["Usuarios Registrados", "Inicios de Sesión", "Intentos Fallidos", "2FA Enviados"],
-                    datasets: [
-                      {
-                        label: "Cantidad",
-                        data: [stats?.users || 0, stats?.logins || 0, stats?.failedLogins || 0, stats?.twoFA || 0],
-                        backgroundColor: ["#3498db", "#2ecc71", "#e74c3c", "#f1c40f"],
-                      },
-                    ],
-                  }}
-                />
-              </Paper>
-            </Grid>
+        
+          {/* 📌 Formulario para Agregar Libros */}
+          <Paper sx={{ padding: 3, marginTop: 4 }}>
+            <Typography variant="h5">➕ Agregar Nuevo Libro</Typography>
+            <form onSubmit={handleAddBook} style={{ display: "flex", flexDirection: "column", gap: "15px", marginTop: "10px" }}>
+              <TextField label="Título" name="title" value={form.title} onChange={handleInputChange} required />
+              <TextField label="Autor" name="author" value={form.author} onChange={handleInputChange} required />
+              <TextField label="Descripción" name="description" value={form.description} onChange={handleInputChange} required />
+              <TextField label="Año de Publicación" name="published_year" value={form.published_year} onChange={handleInputChange} required />
+              <TextField select label="Género" name="genre" value={form.genre} onChange={handleInputChange} required>
+                {["Ficción", "No Ficción", "Misterio", "Fantasía", "Ciencia Ficción"].map((genre) => (
+                  <MenuItem key={genre} value={genre}>{genre}</MenuItem>
+                ))}
+              </TextField>
 
-            <Grid item xs={12} md={6}>
-              <Paper sx={{ padding: 3 }}>
-                <Typography variant="h6">Distribución de Accesos</Typography>
-                <Doughnut
-                  data={{
-                    labels: ["Logins Exitosos", "Intentos Fallidos"],
-                    datasets: [
-                      {
-                        data: [stats?.logins || 0, stats?.failedLogins || 0],
-                        backgroundColor: ["#2ecc71", "#e74c3c"],
-                      },
-                    ],
-                  }}
-                />
-              </Paper>
-            </Grid>
-          </Grid>
+              {/* 📌 Input para seleccionar archivo PDF */}
+              <input type="file" accept="application/pdf" onChange={handleFileChange} />
+
+              <Button variant="contained" color="primary" type="submit">📖 Agregar Libro</Button>
+            </form>
+          </Paper>
+
+          {/* 📌 Notificaciones Snackbar */}
+          <Snackbar open={snackbarOpen} autoHideDuration={4000} onClose={() => setSnackbarOpen(false)}>
+            <Alert onClose={() => setSnackbarOpen(false)} severity={snackbarSeverity}>
+              {snackbarMessage}
+            </Alert>
+          </Snackbar>
+
+          <Paper sx={{ marginTop: 5, padding: 3 }}>
+  <Typography variant="h5">📚 Libros en la Biblioteca</Typography>
+  <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2, justifyContent: "center", marginTop: 3 }}>
+    {books.map((book) => (
+      <Paper key={book.id} sx={{ padding: 2, width: "300px" }}>
+        <Typography variant="h6">{book.title}</Typography>
+        <Typography variant="body2">Autor: {book.author}</Typography>
+        <Typography variant="body2">Género: {book.genre}</Typography>
+      </Paper>
+    ))}
+  </Box>
+</Paper>
+
         </>
       )}
     </Container>

@@ -17,15 +17,12 @@ const Login = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [code, setCode] = useState(""); // Código 2FA
-  const [step, setStep] = useState(1); // Control de paso: 1 = Login, 2 = 2FA
   const [error, setError] = useState(""); // Manejo de errores
   const [quote, setQuote] = useState(""); // Frase motivacional
-
+  const [isLoading, setIsLoading] = useState(false); // Estado para controlar el spinner
   const text = "Encuentra en la lectura tu mejor versión";
-
-const [displayText, setDisplayText] = useState("");
-const [index, setIndex] = useState(0);
+  const [displayText, setDisplayText] = useState("");
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
     const randomQuote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
@@ -41,30 +38,28 @@ const [index, setIndex] = useState(0);
       return () => clearTimeout(timeout);
     }
   }, [index]);
-  
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError(""); 
-    const success = await auth?.login(email, password);
-    if (success) {
-      navigate("/dashboard");
-    } else {
-      setError("Se requiere autenticación de dos factores. Ingresa el código que recibiste.");
-      setStep(2);
+    setError(""); // Limpiar mensajes de error previos
+    setIsLoading(true); // Activar el spinner
+  
+    try {
+      const success = await auth?.login(email, password); // Intentar hacer login
+      setIsLoading(false); // Desactivar el spinner después de la validación
+  
+      if (success) {
+        navigate("/dashboard"); // Redirigir al dashboard si el login es exitoso
+      } else {
+        setError("Credenciales incorrectas. Inténtalo de nuevo.");
+      }
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
+      setIsLoading(false); // Desactivar el spinner si ocurre un error inesperado
+      setError("Ocurrió un error. Intenta nuevamente.");
     }
   };
-
-  const handleVerify2FA = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
-    const success = await auth?.verify2FA(code);
-    if (success) {
-      navigate("/dashboard");
-    } else {
-      setError("Código incorrecto. Inténtalo de nuevo.");
-    }
-  };
+  
 
   return (
     <div className="login-container">
@@ -76,73 +71,59 @@ const [index, setIndex] = useState(0);
 
       {/* 📌 Sección Derecha con el Formulario */}
       <div className="login-right">
-  <Box className="login-box">
-    {/* 📌 Contenedor decorativo superior */}
-    <div className="login-header">
-      <Typography className="login-title">
-        {step === 1 ? "Iniciar Sesion" : "Verificación 2FA 🔒"}
-      </Typography>
-      <Typography className="login-subtitle">
-        {step === 1 ? "Ingresa tus credenciales para continuar." : "Introduce el código enviado a tu correo."}
-      </Typography>
-    </div>
+        <Box className="login-box">
+          {/* 📌 Contenedor decorativo superior */}
+          <div className="login-header">
+            <Typography className="login-title">
+              Iniciar Sesión
+            </Typography>
+            <Typography className="login-subtitle">
+              Ingresa tus credenciales para continuar.
+            </Typography>
+          </div>
 
-    {error && <Typography className="login-error">{error}</Typography>}
 
-    {/* 📌 Formulario */}
-    <Box component="form" onSubmit={step === 1 ? handleLogin : handleVerify2FA} className="login-form">
-      {step === 1 ? (
-        <>
-          <TextField
-            label="Correo electrónico"
-            variant="outlined"
-            fullWidth
-            className="login-input"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            sx={{ mb: 2 }} // Agrega margen inferior
-          />
-          <TextField
-            label="Contraseña"
-            type="password"
-            variant="outlined"
-            fullWidth
-            className="login-input"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            sx={{ mb: 2 }} // Agrega margen inferior
-          />
-          <Button type="submit" className="login-button">
-            🚀 Iniciar sesión
-          </Button>
-        </>
-      ) : (
-        <>
-          <TextField
-            label="Código 2FA"
-            variant="outlined"
-            fullWidth
-            className="login-input"
-            value={code}
-            onChange={(e) => setCode(e.target.value)}
-            required
-          />
-          <Button type="submit" className="login-button">
-            ✅ Verificar Código
-          </Button>
-        </>
-      )}
-    </Box>
+          {/* 📌 Formulario */}
+          <Box component="form" onSubmit={handleLogin} className="login-form">
+            <TextField
+              label="Correo electrónico"
+              variant="outlined"
+              fullWidth
+              className="login-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              sx={{ mb: 2 }} // Agrega margen inferior
+            />
+            <TextField
+              label="Contraseña"
+              type="password"
+              variant="outlined"
+              fullWidth
+              className="login-input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              sx={{ mb: 2 }} // Agrega margen inferior
+            />
+            {/* <Button type="submit" className="login-button">
+              🚀 Iniciar sesión
+            </Button> */}
+            <Button type="submit" disabled={isLoading} className="login-button">
+  {isLoading ? 'Cargando...' : '🚀 Iniciar sesión'}
+</Button>
 
-    {/* 📌 Enlace de recuperación */}
-    {/* <Typography className="login-footer">
-      ¿Olvidaste tu contraseña? <a href="#">Recupérala aquí</a>
-    </Typography> */}
-  </Box>
-</div>
+          </Box>
+          {isLoading && (
+  <div className="spinner-container">
+    <div className="spinner"></div>
+  </div>
+)} {/* Mostrar el spinner mientras carga */}
 
+{error && <p className="error-message">{error}</p>} {/* Mostrar error si lo hay */}
+
+        </Box>
+      </div>
     </div>
   );
 };

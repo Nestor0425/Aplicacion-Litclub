@@ -1,0 +1,108 @@
+/* 📌 Estilos generales */
+.page-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #5c2c7b;
+  }
+  
+  /* 📌 Sección de Género */
+  .genre-section {
+    margin-bottom: 50px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* 📌 Título del género */
+  .genre-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #1e81a6;
+    text-align: left;
+    margin-bottom: 10px;
+  }
+  
+  /* 📌 Línea divisoria */
+  .genre-divider {
+    height: 3px;
+    background: linear-gradient(to right, #5c2c7b, #1e81a6);
+    margin-bottom: 20px;
+    border-radius: 5px;
+  }
+  
+  /* 📌 Tarjeta del libro */
+  .book-card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* 📌 Título del libro */
+  .book-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* 📌 Autor del libro */
+  .book-author {
+    font-size: 1rem;
+    color: #777;
+  }
+  
+  /* 📌 Barra de Búsqueda */
+.search-bar {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  
+  /* 📌 Input de búsqueda */
+  .search-input {
+    width: 40%;
+    min-width: 250px;
+  }
+  
+  /* 📌 Dropdowns */
+  .search-dropdown {
+    width: 20%;
+    min-width: 180px;
+  }
+  
+  /* 📌 Tarjeta de libro */
+  .book-card {
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.2);
+  }
+  
+  .book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  /* 📌 Título del libro */
+  .book-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  /* 📌 Autor del libro */
+  .book-author {
+    font-size: 1rem;
+    color: #777;
+  }
+  

@@ -6,3 +6,33 @@ CREATE TABLE logs (
     message TEXT,
     timestamp TIMESTAMP DEFAULT current_timestamp
 );
+
+CREATE TABLE books (
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    author VARCHAR(255) NOT NULL,
+    genre VARCHAR(100),
+    description TEXT,
+    cover_image_url TEXT, -- URL de la imagen del libro
+    published_year INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+ALTER TABLE books ADD COLUMN file_url VARCHAR(255);
+ALTER TABLE books ADD COLUMN available_file_url TEXT;
+
+
+MOOOOOOOOOOO
+CREATE TABLE loans (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    book_id INTEGER REFERENCES books(id) ON DELETE CASCADE,
+    loan_date TIMESTAMP DEFAULT NOW(),
+    return_date TIMESTAMP, -- Fecha de devolución
+    due_date TIMESTAMP NOT NULL, -- Fecha límite
+    returned BOOLEAN DEFAULT FALSE -- Estado del préstamo
+);
+
+ALTER TABLE books ADD COLUMN available BOOLEAN DEFAULT true;
+ALTER TABLE loans ADD COLUMN borrowed_at TIMESTAMP DEFAULT NOW();
+ALTER TABLE loans ADD COLUMN returned_at TIMESTAMP NULL;
