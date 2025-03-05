@@ -122,6 +122,9 @@ const Login = () => {
 
 {error && <p className="error-message">{error}</p>} {/* Mostrar error si lo hay */}
 
+<Button type="submit" className="login-button" onClick={() => navigate("/register")}>
+  Registro
+</Button>
         </Box>
       </div>
     </div>
