@@ -237,9 +237,7 @@ h6 {
 }
 .dashboard-container {
   background-color: #f5f5f5;
-  background-image: url('/path/to/your/background-image.jpg');
-  background-size: cover;
-  background-position: center;
+
   min-height: 100vh;
   padding: 40px;
 }
