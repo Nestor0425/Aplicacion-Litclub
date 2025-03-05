@@ -3,7 +3,7 @@ import { useState } from "react";
 
 export const StatsSection = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [progress, setProgress] = useState(60); // Ejemplo de progreso al 60%
+  const [progress] = useState(60); // Ejemplo de progreso al 60%
 
   return (
     <Paper className="dashboard-section">
