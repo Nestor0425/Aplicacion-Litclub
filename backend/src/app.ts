@@ -19,7 +19,11 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://aplicacionlitclub-fnqb-git-main-nestor-ruizs-projects.vercel.app", // ✅ Permite solo el frontend
+    origin: [
+      "https://aplicacionlitclub-fnqb-nqv6nnceu-nestor-ruizs-projects.vercel.app", 
+      "https://aplicacionlitclub-fnqb-git-main-nestor-ruizs-projects.vercel.app"
+    ], // Asegura incluir todas las posibles URLs de Vercel
+   // ✅ Permite solo el frontend
     credentials: true, // ✅ Permite cookies y headers de autenticación
     methods: ["GET", "POST", "PUT", "DELETE"], // ✅ Métodos permitidos
     allowedHeaders: ["Content-Type", "Authorization"], // ✅ Permite headers importantes
