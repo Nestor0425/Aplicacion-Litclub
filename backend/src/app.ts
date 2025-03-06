@@ -66,8 +66,8 @@ app.use("/uploads", express.static("uploads"));
 // 🔹 Evitar error "X-Frame-Options"
 // Configurar las cabeceras CSP manualmente
 app.use((req, res, next) => {
-  res.setHeader("Content-Security-Policy", "frame-ancestors 'self' http://localhost:5173");
-  res.setHeader("X-Frame-Options", "ALLOW-FROM http://localhost:5173"); // ❗ Algunos navegadores aún usan esto
+  res.setHeader("Content-Security-Policy", "frame-ancestors 'self' https://aplicacionlitclub-fnqb-git-main-nestor-ruizs-projects.vercel.app");
+  res.setHeader("X-Frame-Options", "ALLOW-FROM https://aplicacionlitclub-fnqb-git-main-nestor-ruizs-projects.vercel.app"); // ❗ Algunos navegadores aún usan esto
   next();
 });
 
