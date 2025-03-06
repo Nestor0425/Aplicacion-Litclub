@@ -19,7 +19,7 @@ const app = express();
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:5173", // ✅ Permite solo el frontend
+    origin: "https://aplicacionlitclub-fnqb-git-main-nestor-ruizs-projects.vercel.app", // ✅ Permite solo el frontend
     credentials: true, // ✅ Permite cookies y headers de autenticación
     methods: ["GET", "POST", "PUT", "DELETE"], // ✅ Métodos permitidos
     allowedHeaders: ["Content-Type", "Authorization"], // ✅ Permite headers importantes
