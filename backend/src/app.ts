@@ -21,7 +21,7 @@ app.use(cors());
 app.use(express.json());
 app.use(
   cors({
-    origin: "https://aplicacion-lit-club-8j452i2zm-alexisrdz1219s-projects.vercel.app", // ✅ Permite solo el frontend
+    origin: "https://aplicacion-lit-club.vercel.app/login", // ✅ Permite solo el frontend
     credentials: true, // ✅ Permite cookies y headers de autenticación
     methods: ["GET", "POST", "PUT", "DELETE"], // ✅ Métodos permitidos
     allowedHeaders: ["Content-Type", "Authorization"], // ✅ Permite headers importantes
