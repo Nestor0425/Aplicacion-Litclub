@@ -16,10 +16,11 @@ const dashboard_routes_1 = __importDefault(require("./routes/dashboard.routes"))
 const book_routes_1 = __importDefault(require("./routes/book.routes"));
 const morgan_1 = __importDefault(require("morgan"));
 const app = (0, express_1.default)();
+app.use((0, cors_1.default)());
 // Middleware para manejar JSON
 app.use(express_1.default.json());
 app.use((0, cors_1.default)({
-    origin: "http://localhost:5173", // ✅ Permite solo el frontend
+    origin: "https://aplicacion-lit-club-8j452i2zm-alexisrdz1219s-projects.vercel.app", // ✅ Permite solo el frontend
     credentials: true, // ✅ Permite cookies y headers de autenticación
     methods: ["GET", "POST", "PUT", "DELETE"], // ✅ Métodos permitidos
     allowedHeaders: ["Content-Type", "Authorization"], // ✅ Permite headers importantes
@@ -55,8 +56,8 @@ app.use("/uploads", express_1.default.static("uploads"));
 // 🔹 Evitar error "X-Frame-Options"
 // Configurar las cabeceras CSP manualmente
 app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy", "frame-ancestors 'self' http://localhost:5173");
-    res.setHeader("X-Frame-Options", "ALLOW-FROM http://localhost:5173"); // ❗ Algunos navegadores aún usan esto
+    res.setHeader("Content-Security-Policy", "frame-ancestors 'self' https://aplicacionlitclub-fnqb-git-main-nestor-ruizs-projects.vercel.app");
+    res.setHeader("X-Frame-Options", "ALLOW-FROM https://aplicacionlitclub-fnqb-git-main-nestor-ruizs-projects.vercel.app"); // ❗ Algunos navegadores aún usan esto
     next();
 });
 exports.default = app;
