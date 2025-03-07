@@ -15,6 +15,8 @@ import path from "path";
 import morgan from "morgan";
 const app = express();
 
+app.use(cors());
+
 // Middleware para manejar JSON
 app.use(express.json());
 app.use(
