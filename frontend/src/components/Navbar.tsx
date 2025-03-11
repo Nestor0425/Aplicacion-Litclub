@@ -49,7 +49,7 @@ const Navbar = () => {
       >
         <Toolbar>
           {/* Imagen en lugar del icono */}
-          <Box component="img" src="../src/assets/logo.png" alt="Logo" sx={{ width: 40, height: 40, mr: 2 }} />
+          <Box component="img" src="/logo.png" alt="Logo" sx={{ width: 40, height: 40, mr: 2 }} />
 
           {/* Título con tipografía personalizada */}
           <Typography variant="h6" sx={{ flexGrow: 1, fontFamily: 'Varela Round, sans-serif' }}>
