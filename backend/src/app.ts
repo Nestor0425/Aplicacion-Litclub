@@ -75,8 +75,8 @@ app.get("/logs", (req, res) => {
 // 🔹 Evitar error "X-Frame-Options"
 // Configurar las cabeceras CSP manualmente
 app.use((req, res, next) => {
-  res.setHeader("Content-Security-Policy", "frame-ancestors 'self' https://aplicacionlitclub-fnqb-git-main-nestor-ruizs-projects.vercel.app");
-  res.setHeader("X-Frame-Options", "ALLOW-FROM https://aplicacionlitclub-fnqb-git-main-nestor-ruizs-projects.vercel.app"); // ❗ Algunos navegadores aún usan esto
+  res.setHeader("Content-Security-Policy", "frame-ancestors 'self' https://aplicacion-lit-club-ka8t0c03r-alexisrdz1219s-projects.vercel.app");
+  res.setHeader("X-Frame-Options", "ALLOW-FROM https://aplicacion-lit-club-ka8t0c03r-alexisrdz1219s-projects.vercel.app"); // ❗ Algunos navegadores aún usan esto
   next();
 });
 
