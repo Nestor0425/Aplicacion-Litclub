@@ -1,0 +1,93 @@
+.encabezado {
+    display: flex;
+    justify-content: space-between; /* Separar los elementos a los extremos */
+    align-items: center; /* Alinear los elementos verticalmente al centro */
+    padding: 8px 15px; /* Puedes ajustar el padding según lo necesites */
+    width: 90%;
+    margin-left: 30px;
+  }
+  
+  .logo img {
+    width: 80px; /* Ajusta el tamaño del logo si es necesario */
+    height: auto;
+  }
+  
+/* Contenedor principal */
+.container {
+    display: flex;
+    flex-direction: column; /* Apilar columnas en dispositivos pequeños */
+    gap: 2rem; /* Espacio entre las columnas */
+    margin-top: 2.5rem; /* Separación del contenido superior */
+  }
+  
+  /* Estilos para la imagen */
+  .image {
+    width: 100%; /* Ancho completo en dispositivos pequeños */
+    display: flex;
+    justify-content: center; /* Centrar la imagen */
+  }
+  
+  /* Estilos para el texto */
+  .text {
+    width: 100%; /* Ancho completo en dispositivos pequeños */
+    text-align: center;
+  }
+  
+  /* Títulos y párrafos */
+  .title {
+    font-size: 56px;
+    font-weight: bold;
+    color: #6b4dff; /* Color del título */
+    line-height: 1.25;
+    width: 90%;
+  text-align: center;
+  display: flex;
+  justify-content: center; /* Centrar horizontalmente */
+  align-items: center; /* Centrar verticalmente si el contenedor tiene altura */
+  flex-direction: column;
+  }
+  
+  .description {
+    color: #4a4a4a;
+    margin-top: 1rem;
+    font-size: 1.125rem;
+  }
+  
+  /* Estilo del botón */
+  .btn {
+    margin-top: 1.5rem;
+    padding: 1rem 2rem;
+    border: 2px solid #4a4a4a;
+    color: #4a4a4a;
+    border-radius: 0.5rem;
+    background-color: transparent;
+    transition: background-color 0.3s;
+  }
+  
+  .btn:hover {
+    background-color: #f1f1f1;
+  }
+  
+  /* En pantallas grandes */
+  @media (min-width: 1024px) {
+    .container {
+      flex-direction: row; /* En pantallas grandes, las columnas deben ir en fila */
+      justify-content: space-between; /* Espacio entre columnas */
+    }
+  
+    .image,
+    .text {
+      width: 48%; /* Asegura que cada columna tenga un ancho de 48% */
+    }
+  
+    .text {
+      text-align: left; /* Alinear texto a la izquierda */
+    }
+  }
+  
+  
+  
+  
+  
+  
+  

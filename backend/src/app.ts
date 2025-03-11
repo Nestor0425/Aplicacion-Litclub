@@ -67,6 +67,10 @@ app.use("/books", bookRoutes);
 // Servir archivos estáticos desde la carpeta "uploads"
 app.use("/uploads", express.static("uploads"));
 
+app.get("/logs", (req, res) => {
+  res.json({ message: "Logs obtenidos correctamente" });
+});
+
 
 // 🔹 Evitar error "X-Frame-Options"
 // Configurar las cabeceras CSP manualmente
