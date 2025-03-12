@@ -114,10 +114,7 @@ const Dashboard = () => {
   
     try {
       const token = localStorage.getItem("token");
-      if (!token) {
-        alert("Debes iniciar sesión para agregar libros.");
-        return;
-      }
+      if (!token) throw new Error("No hay token de autenticación");
   
       const formData = new FormData();
       formData.append("title", form.title);
@@ -125,34 +122,30 @@ const Dashboard = () => {
       formData.append("genre", form.genre);
       formData.append("description", form.description);
       formData.append("published_year", form.published_year);
-      if (form.file) {
-        formData.append("file", form.file);
-      }
+      if (form.file) formData.append("file", form.file);
   
-      // ✅ Usamos fetch en lugar de axios
       const res = await fetch(`${import.meta.env.VITE_API_URL}/books`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`, // ✅ Eliminar "Content-Type"
+          Authorization: `Bearer ${token}`,
         },
         body: formData,
-        credentials: "include", // ✅ Para permitir cookies/sesión
+        credentials: "include",
       });
   
-      // ✅ Verificar respuesta
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.message || "Error al agregar libro.");
+        throw new Error(errorData.message || "Error al agregar el libro");
       }
   
       const data = await res.json();
+      console.log("✅ Libro agregado:", data);
   
-      // ✅ Mostrar mensaje de éxito
       setSnackbarMessage(data.message);
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
   
-      // ✅ Resetear formulario
+      // Limpiar el formulario
       setForm({
         title: "",
         author: "",
@@ -162,18 +155,13 @@ const Dashboard = () => {
         file: null,
       });
     } catch (error) {
-      console.error("❌ Error al agregar el libro:", error);
-  
-      // ✅ Mostrar mensaje de error
-      setSnackbarMessage(
-        error instanceof Error
-          ? error.message
-          : "Error desconocido al agregar el libro."
-      );
+      console.error("❌ Error al agregar libro:", error);
+      setSnackbarMessage(error instanceof Error ? error.message : "Error desconocido");
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
   };
+  
   
 
   const hadleViewLogs = () => {
