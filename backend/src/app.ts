@@ -19,6 +19,11 @@ app.use(cors());
 
 // Middleware para manejar JSON
 app.use(express.json());
+const allowedOrigins = [
+  "https://aplicacion-lit-club-jx94w2f37-alexisrdz1219s-projects.vercel.app"
+];
+
+
 app.use(
   cors({
     origin: [
