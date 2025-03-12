@@ -55,6 +55,7 @@ import path from "path";
 import { authenticateToken } from "../middlewares/auth.middleware";
 import { addBook, getBooks, getLatestBooks, getBookFile, updateBook } from "../controllers/book.controller";
 import pool from "../config/db";
+import upload from "../config/multer";
 
 // 📌 Definir un tipo de request extendido con `user`
 interface AuthRequest extends Request {
@@ -74,7 +75,7 @@ const storage = multer.diskStorage({
 });
 
 // ✅ Middleware de Multer para subir archivos PDF y CSV
-const upload = multer({ storage });
+
 
 // ✅ Ruta para servir archivos PDF
 router.get("/file/:fileName", (req, res) => {
@@ -98,6 +99,12 @@ router.get("/", async (req: Request, res: Response) => {
     res.status(500).json({ message: "Error interno del servidor" });
   }
 });
+
+router.post("/books", upload.single("file"), addBook);
+router.put("/books/:id", upload.single("file"), updateBook);
+router.get("/books", getBooks);
+router.get("/books/latest", getLatestBooks);
+router.get("/books/file/:id", getBookFile);
 
 
 // ✅ Ruta para obtener los últimos libros agregados
