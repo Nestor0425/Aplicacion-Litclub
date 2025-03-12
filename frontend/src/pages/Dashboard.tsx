@@ -32,9 +32,6 @@ interface Book {
   genre: string;
 }
 
-interface ApiResponse {
-  message: string;
-}
 
 const Dashboard = () => {
   const { user, logout } = useContext(AuthContext) || { user: null, logout: () => {} };
@@ -114,14 +111,14 @@ const Dashboard = () => {
   // 📌 Función para agregar un libro con un archivo PDF
   const handleAddBook = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-
+  
     try {
       const token = localStorage.getItem("token");
       if (!token) {
         alert("Debes iniciar sesión para agregar libros.");
         return;
       }
-
+  
       const formData = new FormData();
       formData.append("title", form.title);
       formData.append("author", form.author);
@@ -131,18 +128,31 @@ const Dashboard = () => {
       if (form.file) {
         formData.append("file", form.file);
       }
-
-      const res = await axios.post<ApiResponse>(`${import.meta.env.VITE_API_URL}/books`, formData, {
+  
+      // ✅ Usamos fetch en lugar de axios
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/books`, {
+        method: "POST",
         headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`, // ✅ Eliminar "Content-Type"
         },
+        body: formData,
+        credentials: "include", // ✅ Para permitir cookies/sesión
       });
-
-      setSnackbarMessage(res.data.message);
+  
+      // ✅ Verificar respuesta
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Error al agregar libro.");
+      }
+  
+      const data = await res.json();
+  
+      // ✅ Mostrar mensaje de éxito
+      setSnackbarMessage(data.message);
       setSnackbarSeverity("success");
       setSnackbarOpen(true);
-
+  
+      // ✅ Resetear formulario
       setForm({
         title: "",
         author: "",
@@ -153,11 +163,18 @@ const Dashboard = () => {
       });
     } catch (error) {
       console.error("❌ Error al agregar el libro:", error);
-      setSnackbarMessage("Error al agregar el libro. Inténtalo de nuevo.");
+  
+      // ✅ Mostrar mensaje de error
+      setSnackbarMessage(
+        error instanceof Error
+          ? error.message
+          : "Error desconocido al agregar el libro."
+      );
       setSnackbarSeverity("error");
       setSnackbarOpen(true);
     }
   };
+  
 
   const hadleViewLogs = () => {
     navigate("/logs");

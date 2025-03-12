@@ -65,7 +65,9 @@ app.use("/dashboard", dashboardRoutes);
 app.use("/books", bookRoutes);
 // Servir archivos estáticos desde la carpeta "uploads"
 // Servir archivos estáticos desde la carpeta "uploads"
-app.use("/uploads", express.static("uploads"));
+app.use("/uploads", express.static(path.join(__dirname, "..", "uploads")));
+
+
 
 app.get("/logs", (req, res) => {
   res.json({ message: "Logs obtenidos correctamente" });

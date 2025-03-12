@@ -178,18 +178,19 @@ export const addBook = async (req: MulterRequest, res: Response): Promise<void> 
     }
 
     const query = `
-      INSERT INTO books (title, author, genre, description, published_year, file_url) 
+      INSERT INTO books (title, author, genre, description, published_year, file_url)
       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *
     `;
     const values = [title, author, genre, description, published_year, fileUrl];
 
     const result = await pool.query(query, values);
-    res.status(201).json({ message: "Libro agregado con éxito.", book: result.rows[0] });
+    res.status(201).json({ message: "Libro agregado correctamente", book: result.rows[0] });
   } catch (error) {
-    console.error("Error al agregar libro:", error);
-    res.status(500).json({ message: "Error interno del servidor." });
+    console.error("❌ Error al agregar libro:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
   }
 };
+
 
 // 📂 Obtener archivo PDF de un libro
 export const getBookFile = async (req: Request, res: Response): Promise<void> => {
