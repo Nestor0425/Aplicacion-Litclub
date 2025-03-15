@@ -116,9 +116,10 @@ const app = express();
 
 // 📌 Configuración dinámica de CORS
 const allowedOrigins = [
-"http://localhost:5173",// Frontend local
-"https://aplicacion-lit-club-ka8t0c03r-alexisrdz1219s-projects.vercel.app",
-  "https://aplicacionlitclub.onrender.com", // Enlace de producción en Render
+  "*"
+// "http://localhost:5173",// Frontend local
+// "https://aplicacion-lit-club-ka8t0c03r-alexisrdz1219s-projects.vercel.app",
+//   "https://aplicacionlitclub.onrender.com", // Enlace de producción en Render
 ];
 
 app.use(
