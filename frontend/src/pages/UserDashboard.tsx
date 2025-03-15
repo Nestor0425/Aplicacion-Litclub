@@ -114,14 +114,13 @@
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import { Button, Typography, Grid, Paper } from "@mui/material";
-import "../styles/UserDashboard.css"; // Importar CSS personalizado
+import { Button, Typography, Grid, Paper, CircularProgress, Alert } from "@mui/material";
 import axios from "axios";
 
-import { BookCard } from "../components/BookCard"; // Componente de tarjeta de libro
-import { StatsSection } from "../components/StatsSection"; // Componente de estadísticas
-import { MotivationalQuote } from "../components/MotivationalQuote"; // Componente de cita motivacional
-import { AuthorReview } from "../components/AuthorReview"; // Componente de reseña de autor
+import { BookCard } from "../components/BookCard";
+import { StatsSection } from "../components/StatsSection";
+import { MotivationalQuote } from "../components/MotivationalQuote";
+import { AuthorReview } from "../components/AuthorReview";
 
 interface Book {
   id: number;
@@ -130,55 +129,76 @@ interface Book {
   cover_image_url: string;
 }
 
-import { CircularProgress } from "@mui/material";
-
 const UserDashboard = () => {
   const { user, logout } = useContext(AuthContext) || { user: null, logout: () => {} };
   const navigate = useNavigate();
   const [latestBooks, setLatestBooks] = useState<Book[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!user) {
+      navigate("/login");
+      return;
+    }
+
     const fetchLatestBooks = async () => {
       try {
         const res = await axios.get<Book[]>(`${import.meta.env.VITE_API_URL}/books/latest`);
-        setLatestBooks(res.data);
-        setLoading(false);
+        if (res.status === 200) {
+          setLatestBooks(res.data);
+        } else {
+          throw new Error("No se pudieron cargar los libros.");
+        }
       } catch (error) {
         console.error("Error obteniendo los últimos libros:", error);
+        setError("No se pudieron cargar los libros. Intenta más tarde.");
+      } finally {
         setLoading(false);
       }
     };
 
     fetchLatestBooks();
-  }, []);
+  }, [user, navigate]);
 
   return (
-    <div className="dashboard-container">
-      <Typography variant="h3" sx={{ textAlign: "center", fontWeight: 'bold', fontSize: '2.5rem' }}>
-        Bienvenido {user?.nombre || "Usuario"} a tu Biblioteca
+    <div style={{ maxWidth: "1200px", margin: "auto", padding: "20px" }}>
+      <Typography variant="h3" sx={{ textAlign: "center", fontWeight: "bold", fontSize: "2.5rem" }}>
+        Bienvenido {user?.nombre || "Usuario"} a tu Biblioteca 📚
       </Typography>
-      <Typography variant="h6" sx={{ textAlign: "center", marginBottom: 2, color: '#777' }}>
-        Que pases un lindo dia {user?.nombre || "Usuario"}!, gracias por tu visita
+      <Typography variant="h6" sx={{ textAlign: "center", marginBottom: 2, color: "#777" }}>
+        Que tengas un gran día, {user?.nombre || "Usuario"} 😊
       </Typography>
 
       {loading ? (
-        <div className="loading-spinner">
+        <div style={{ display: "flex", justifyContent: "center", marginTop: "20px" }}>
           <CircularProgress color="primary" />
         </div>
+      ) : error ? (
+        <Alert severity="error" sx={{ textAlign: "center", marginBottom: 3 }}>
+          {error}
+        </Alert>
       ) : (
         <Grid container spacing={4}>
-          {/* Sección de Libros */}
+          {/* 📚 Sección de Libros */}
           <Grid item xs={12}>
-            <Paper className="books-section">
-              <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: 'bold' }}>Lo mas Top 📈</Typography>
-              <Grid container spacing={3}>
-                {latestBooks.map((book) => (
-                  <Grid item xs={12} sm={6} md={4} key={book.id}>
-                    <BookCard book={book} />
-                  </Grid>
-                ))}
-              </Grid>
+            <Paper sx={{ padding: 3, borderRadius: "12px", boxShadow: 3 }}>
+              <Typography variant="h5" sx={{ marginBottom: 2, fontWeight: "bold" }}>
+                📈 Lo más popular
+              </Typography>
+              {latestBooks.length > 0 ? (
+                <Grid container spacing={3}>
+                  {latestBooks.map((book) => (
+                    <Grid item xs={12} sm={6} md={4} key={book.id}>
+                      <BookCard book={book} />
+                    </Grid>
+                  ))}
+                </Grid>
+              ) : (
+                <Typography variant="body1" sx={{ textAlign: "center", color: "#777" }}>
+                  No hay libros disponibles en este momento.
+                </Typography>
+              )}
               <Button
                 variant="contained"
                 color="primary"
@@ -190,28 +210,37 @@ const UserDashboard = () => {
             </Paper>
           </Grid>
 
-          {/* Sección de Estadísticas */}
-          <Grid item xs={12} md={4}>
-            <StatsSection />
-          </Grid>
+          {/* 📊 Sección de Estadísticas */}
+          {/* 📊 Sección de Estadísticas */}
+<Grid item xs={12} md={4}>
+  <StatsSection booksRead={12} readingHours={30} progress={60} />
+</Grid>
 
-          {/* Sección de Historia Motivacional */}
+
+          {/* ✨ Sección de Motivación */}
           <Grid item xs={12} md={4}>
             <MotivationalQuote />
           </Grid>
 
-          {/* Sección de Reseñas de Autores */}
+          {/* ✍ Sección de Reseñas de Autores */}
           <Grid item xs={12} md={4}>
             <AuthorReview />
           </Grid>
         </Grid>
       )}
 
-      {/* Botón de Cerrar Sesión */}
+      {/* 🚪 Botón de Cerrar Sesión */}
       <Button
         variant="contained"
         color="error"
-        sx={{ marginTop: 4, width: "200px", marginLeft: "auto", marginRight: "auto", display: "block" }}
+        sx={{
+          marginTop: 4,
+          width: "200px",
+          marginLeft: "auto",
+          marginRight: "auto",
+          display: "block",
+          fontWeight: "bold",
+        }}
         onClick={() => {
           logout();
           navigate("/login");
@@ -224,4 +253,5 @@ const UserDashboard = () => {
 };
 
 export default UserDashboard;
+
 

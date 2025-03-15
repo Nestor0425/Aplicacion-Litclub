@@ -3,18 +3,22 @@ import { NavbarContext } from "../context/NavbarContext";
 import CanvaEmbed from "../components/CanvaEmbed";
 import "../styles/Inicio.css";
 
-
 const Inicio = () => {
-  const { setShowNavbar } = useContext(NavbarContext);
+  const navbarContext = useContext(NavbarContext);
 
   useEffect(() => {
-    setShowNavbar(false); // Oculta el Navbar al entrar
-    return () => setShowNavbar(true); // Lo vuelve a mostrar al salir
-  }, [setShowNavbar]);
+    if (navbarContext) {
+      navbarContext.setShowNavbar(false); // Oculta el Navbar al entrar
+    }
 
-  return (
-      <><CanvaEmbed /></>
-  );
+    return () => {
+      if (navbarContext) {
+        navbarContext.setShowNavbar(true); // Lo vuelve a mostrar al salir
+      }
+    };
+  }, [navbarContext]);
+
+  return <CanvaEmbed />;
 };
 
 export default Inicio;

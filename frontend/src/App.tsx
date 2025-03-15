@@ -1,7 +1,7 @@
 
 // import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
  import { AuthContext } from "./context/AuthContext";
- import { JSX, useContext } from "react";
+ import { JSX, useContext, useEffect } from "react";
 // import { ThemeProvider, CssBaseline } from "@mui/material";
 // import theme from "./theme";
 // import Login from "./pages/Login";
@@ -64,14 +64,13 @@
 // export default App;
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import { NavbarProvider } from "./context/NavbarContext"; // Importar el Provider
+import { NavbarProvider, NavbarWrapper } from "./context/NavbarContext"; // Importar el Provider
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import theme from "./theme";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Logs from "./pages/Logs";
-import Navbar from "./components/Navbar";
 import UserDashboard from "./pages/UserDashboard";
 import BooksPage from "./pages/BooksPage";
 import ReadBook from "./pages/ReadBook";
@@ -79,7 +78,6 @@ import BookViewer from "./pages/BookViewer";
 import EditBooksPage from "./pages/EditBooksPage";
 import UploadBooksPage from "./pages/UploadBooksPage";
 import Inicio from "./pages/Inicio";
-import { NavbarContext } from "./context/NavbarContext"; // Importar el contexto
 
 const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
   const auth = useContext(AuthContext);
@@ -87,6 +85,9 @@ const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
 };
 
 const App = () => {
+  useEffect(() => {
+    console.log("🌎 Backend en:", import.meta.env.VITE_API_URL);
+  }, []);
   return (
     <AuthProvider>
       <NavbarProvider>
@@ -116,9 +117,5 @@ const App = () => {
   );
 };
 
-const NavbarWrapper = () => {
-  const { showNavbar } = useContext(NavbarContext);
-  return showNavbar ? <Navbar /> : null;
-};
 
 export default App;

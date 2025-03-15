@@ -1,9 +1,9 @@
-import express from "express";
-import { getPurchases } from "../controllers/purchases.controller";
-import { authenticateToken } from "../middlewares/auth.middleware";
+// import express from "express";
+// import { getPurchases } from "../controllers/purchases.controller";
+// import { authenticateToken } from "../middlewares/auth.middleware";
 
-const router = express.Router();
+// const router = express.Router();
 
-router.get("/", authenticateToken, getPurchases);
+// router.get("/", authenticateToken, getPurchases);
 
-export default router;
+// export default router;

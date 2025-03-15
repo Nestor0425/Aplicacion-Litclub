@@ -7,16 +7,19 @@ CREATE TABLE logs (
     timestamp TIMESTAMP DEFAULT current_timestamp
 );
 
-CREATE TABLE books (
+CREATE TABLE IF NOT EXISTS books (
     id SERIAL PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     author VARCHAR(255) NOT NULL,
-    genre VARCHAR(100),
-    description TEXT,
-    cover_image_url TEXT, -- URL de la imagen del libro
-    published_year INT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    genre VARCHAR(100) NOT NULL,
+    description TEXT NOT NULL,
+    cover_image_url TEXT DEFAULT NULL,
+    published_year INTEGER DEFAULT NULL CHECK (published_year > 0),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    available BOOLEAN DEFAULT TRUE,
+    file_url TEXT DEFAULT NULL
 );
+
 
 ALTER TABLE books ADD COLUMN file_url VARCHAR(255);
 ALTER TABLE books ADD COLUMN available_file_url TEXT;
