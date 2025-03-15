@@ -11,9 +11,9 @@ exports.authorizeRole = exports.authenticateToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
+// Middleware para autenticar el token JWT
 const authenticateToken = (req, res, next) => {
     try {
-        // ✅ Obtener el token desde el header Authorization
         const authHeader = req.headers.authorization;
         if (!authHeader || !authHeader.startsWith("Bearer ")) {
             res.status(403).json({ message: "Acceso denegado, token no proporcionado" });
@@ -30,7 +30,7 @@ const authenticateToken = (req, res, next) => {
                 return;
             }
             req.user = decoded;
-            next(); // ✅ Continuar con la siguiente función
+            next();
         });
     }
     catch (error) {
@@ -39,17 +39,18 @@ const authenticateToken = (req, res, next) => {
     }
 };
 exports.authenticateToken = authenticateToken;
-const authorizeRole = (role) => {
+// Middleware para autorizar roles (acepta uno o varios)
+const authorizeRole = (...roles) => {
     return (req, res, next) => {
         if (!req.user) {
             res.status(403).json({ message: "Acceso denegado, usuario no autenticado" });
             return;
         }
-        if (req.user.rol !== role) {
-            res.status(403).json({ message: `Acceso denegado, se requiere rol: ${role}` });
+        if (!roles.includes(req.user.rol)) {
+            res.status(403).json({ message: `Acceso denegado, se requiere rol: ${roles.join(", ")}` });
             return;
         }
-        next(); // ✅ Continuar con la siguiente función
+        next();
     };
 };
 exports.authorizeRole = authorizeRole;

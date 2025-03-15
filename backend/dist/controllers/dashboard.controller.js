@@ -1,4 +1,7 @@
 "use strict";
+// import { Response } from "express";
+// import db from "../config/db";
+// import { AuthenticatedRequest } from "../types/express"; // Importar el tipo de request autenticado
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -25,12 +28,10 @@ const getDashboardStats = async (req, res) => {
             failedLogins: Number(failedLoginsCount.rows[0].count),
             twoFA: Number(twoFAAttempts.rows[0].count),
         });
-        return; // ✅ Retorno explícito para evitar el error de tipos
     }
     catch (error) {
-        console.error("Error obteniendo estadísticas:", error);
+        console.error("❌ Error obteniendo estadísticas:", error);
         res.status(500).json({ message: "Error obteniendo estadísticas" });
-        return; // ✅ Retorno explícito para corregir el error
     }
 };
 exports.getDashboardStats = getDashboardStats;
