@@ -20,6 +20,7 @@
 
 
 // export default router;
+import express from "express";
 
 import { Router } from "express";
 import { login } from "../controllers/auth.controller";
@@ -27,7 +28,7 @@ import { loginLimiter } from "../middlewares/rateLimiter"; // 🔹 Importar midd
 import { getAuthenticatedUser } from "../controllers/auth.controller";
 import { authenticateToken } from "../middlewares/auth.middleware"; // Middleware de autenticación
 
-const router = Router();
+const router = express.Router();
 
 // 🛡️ Aplicar Rate Limiting solo en la ruta de login
 router.post("/login", loginLimiter, login);

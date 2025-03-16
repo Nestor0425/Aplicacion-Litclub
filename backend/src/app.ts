@@ -115,9 +115,17 @@ dotenv.config();
 const app = express();
 
 // 📌 Configuración dinámica de CORS
+// const allowedOrigins = [
+//   "*"
+// // "http://localhost:5173",// Frontend local
+// // "https://aplicacion-lit-club-ka8t0c03r-alexisrdz1219s-projects.vercel.app",
+// //   "https://aplicacionlitclub.onrender.com", // Enlace de producción en Render
+// ];
+
 const allowedOrigins = [
-  "http://localhost:5173", // Frontend local
-  "https://aplicacion-lit-club.vercel.app", // URL en Vercel
+  "http://localhost:5173",
+  "https://aplicacion-lit-club-ka8t0c03r-alexisrdz1219s-projects.vercel.appp", // 👈 Asegúrate de que es la URL correcta en Vercel
+  "https://aplicacionlitclub.onrender.com",
 ];
 
 
@@ -135,10 +143,6 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
-
-// Middleware para manejar preflight requests correctamente
-app.options("*", cors());
-
 
 
 // 📌 Middleware de seguridad
