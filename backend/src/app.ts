@@ -116,20 +116,26 @@ const app = express();
 
 // 📌 Configuración dinámica de CORS
 const allowedOrigins = [
-  "*"
-// "http://localhost:5173",// Frontend local
-// "https://aplicacion-lit-club-ka8t0c03r-alexisrdz1219s-projects.vercel.app",
-//   "https://aplicacionlitclub.onrender.com", // Enlace de producción en Render
+  "http://localhost:5173", // Frontend local
+  "https://aplicacion-lit-club.vercel.app", // URL en Vercel
+  "https://aplicacionlitclub.onrender.com" // Backend en Render
 ];
 
 app.use(
   cors({
-    origin: allowedOrigins,
-    credentials: true,
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("❌ No permitido por CORS"));
+      }
+    },
+    credentials: true, // ✅ Permite credenciales (tokens, cookies)
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 
 // 📌 Middleware de seguridad
 app.use(helmet({ contentSecurityPolicy: false })); // ❗ Evitar conflictos con CSP manual

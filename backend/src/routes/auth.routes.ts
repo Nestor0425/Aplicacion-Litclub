@@ -31,7 +31,7 @@ const router = Router();
 
 // 🛡️ Aplicar Rate Limiting solo en la ruta de login
 router.post("/login", loginLimiter, login);
-router.get("/me", authenticateToken, getAuthenticatedUser); // ✅ Nueva ruta para verificar sesión
+router.post("/me", authenticateToken, getAuthenticatedUser); // ✅ Nueva ruta para verificar sesión
 
 
 
