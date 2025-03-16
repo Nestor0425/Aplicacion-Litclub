@@ -232,7 +232,7 @@ app.use(express.urlencoded({ limit: "50mb", extended: true }));
 // 📌 Lista de dominios permitidos en producción
 const allowedOrigins = [
   "http://localhost:5173", // Desarrollo
-  "https://aplicacion-lit-club-ka8t0c03r-alexisrdz1219s-projects.vercel.app", // Vercel
+  "https://aplicacion-lit-club-ck8lmg4ky-alexisrdz1219s-projects.vercel.app", // Vercel
   "https://aplicacionlitclub.onrender.com", // Render
 ];
 
@@ -240,7 +240,12 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
+      const isAllowed =
+        !origin ||
+        allowedOrigins.includes(origin) ||
+        origin.endsWith(".vercel.app"); // ✅ Permite todos los subdominios de Vercel
+
+      if (isAllowed) {
         callback(null, true);
       } else {
         console.error(`❌ CORS bloqueado para origen: ${origin}`);
@@ -252,6 +257,7 @@ app.use(
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
 
 // 📌 Middleware de seguridad
 app.use(helmet({ contentSecurityPolicy: false }));
