@@ -118,8 +118,8 @@ const app = express();
 const allowedOrigins = [
   "http://localhost:5173", // Frontend local
   "https://aplicacion-lit-club.vercel.app", // URL en Vercel
-  "https://aplicacionlitclub.onrender.com" // Backend en Render
 ];
+
 
 app.use(
   cors({
@@ -130,11 +130,15 @@ app.use(
         callback(new Error("❌ No permitido por CORS"));
       }
     },
-    credentials: true, // ✅ Permite credenciales (tokens, cookies)
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
+
+// Middleware para manejar preflight requests correctamente
+app.options("*", cors());
+
 
 
 // 📌 Middleware de seguridad
