@@ -197,7 +197,7 @@
 import { useEffect, useState } from "react";
 import { 
   Container, Typography, Grid, Card, CardContent, CardMedia, 
-  TextField, MenuItem, Box, CircularProgress
+  TextField, MenuItem, Box, CircularProgress, Button, Dialog, DialogTitle, DialogContent, DialogActions
 } from "@mui/material";
 import axios from "axios";
 
@@ -218,6 +218,9 @@ const BooksPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [genreFilter, setGenreFilter] = useState("");
   const [loading, setLoading] = useState(true);
+  const [selectedBook, setSelectedBook] = useState<Book | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -256,6 +259,15 @@ const BooksPage = () => {
   //   window.open(`${import.meta.env.VITE_API_URL}${fileUrl}`, "_blank");
   // };
 
+  const handleOpenDialog = (book: Book) => {
+    setSelectedBook(book);
+    setDialogOpen(true);
+  };
+  
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+  
   return (
     <Container sx={{ marginTop: 5 }}>
       <Typography variant="h3" align="center">📚 Catálogo de Libros</Typography>
@@ -296,14 +308,32 @@ const BooksPage = () => {
                     <Typography variant="body2">Autor: {book.author}</Typography>
                     <Typography variant="body2">Género: {book.genre}</Typography>
                     <a href={book.file_url} target="_blank" rel="noopener noreferrer">
-  📖 Ver Libro
+  📖 Leer Libro
 </a>
+{/* 🔍 Ver más información */}
+<Button variant="contained" color="primary" onClick={() => handleOpenDialog(book)} sx={{ marginTop: 1 }}>
+                ℹ️ Ver más
+              </Button>
 
                   </CardContent>
                 </Card>
               </Grid>
             ))}
           </Grid>
+          {/* 📌 Dialog para mostrar detalles del libro */}
+    <Dialog open={dialogOpen} onClose={handleCloseDialog} fullWidth maxWidth="sm">
+      <DialogTitle>{selectedBook?.title}</DialogTitle>
+      <DialogContent>
+        <Typography><strong>Autor:</strong> {selectedBook?.author}</Typography>
+        <Typography><strong>Género:</strong> {selectedBook?.genre}</Typography>
+        <Typography><strong>Año de publicación:</strong> {selectedBook?.published_year}</Typography>
+        <Typography><strong>Descripción:</strong> {selectedBook?.description}</Typography>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={handleCloseDialog} color="secondary">Cerrar</Button>
+      </DialogActions>
+    </Dialog>
+
         </>
       )}
     </Container>
