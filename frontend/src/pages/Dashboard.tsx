@@ -611,6 +611,10 @@ const Dashboard = () => {
     }
   };
 
+     const hadleViewLogs = () => {
+     navigate("/logs");
+   };
+
   return (
     <Container sx={{ textAlign: "center", marginTop: 5 }}>
       <Typography variant="h3">📊 Dashboard</Typography>
@@ -634,6 +638,16 @@ const Dashboard = () => {
               ✏️ Editar Libros
             </Button>
           </Box>
+          {user?.rol === "admin" && (
+             <Button
+               variant="contained"
+               color="secondary"
+               sx={{ marginTop: 3 }}
+              onClick={hadleViewLogs}
+            >
+               📜 Ver Logs
+            </Button>
+           )}
 
           <Button variant="contained" color="error" sx={{ marginTop: 3 }} onClick={() => { logout(); navigate("/login"); }}>
             🚪 Cerrar Sesión
