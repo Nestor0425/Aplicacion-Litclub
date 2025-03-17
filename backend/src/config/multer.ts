@@ -57,13 +57,64 @@
 //     });
 
 // export default upload;
+// import multer from "multer";
+// import path from "path";
+// import fs from "fs";
+// import dotenv from "dotenv";
+
+// dotenv.config();
+
+
+// // 📌 Definir el directorio de subida
+// const uploadDir = path.resolve(__dirname, "..", "uploads");
+
+// // ✅ Verificar si la carpeta `uploads/` existe, si no, crearla automáticamente
+// if (!fs.existsSync(uploadDir)) {
+//   fs.mkdirSync(uploadDir, { recursive: true });
+//   console.log("📂 Carpeta 'uploads/' creada exitosamente.");
+// }
+
+// // 📌 Determinar si se está en producción
+// const isProduction = process.env.NODE_ENV === "production";
+
+// // 📌 Configuración del almacenamiento
+// const storage = isProduction
+//   ? multer.memoryStorage() // 🚀 En producción usa almacenamiento en memoria (para S3, Cloudinary, etc.)
+//   : multer.diskStorage({
+//       destination: (_req, _file, cb) => {
+//         cb(null, uploadDir); // 📂 Guarda en 'uploads' en local
+//       },
+//       filename: (_req, file, cb) => {
+//         cb(null, `${Date.now()}-${file.originalname.replace(/\s/g, "_")}`); // 🔹 Evita espacios en los nombres
+//       },
+//     });
+
+// // 📌 Configurar el middleware de Multer
+// const upload = multer({
+//   storage,
+//   limits: { fileSize: 50 * 1024 * 1024 }, // 📌 Límite de 50MB
+//   fileFilter: (_req, file, cb) => {
+//     const allowedMimeTypes = ["application/pdf", "image/jpeg", "image/png", "text/csv", "application/vnd.ms-excel"];
+//     if (allowedMimeTypes.includes(file.mimetype)) {
+//       cb(null, true);
+//     } else {
+//       cb(new Error("❌ Solo se permiten archivos PDF, JPG y PNG"));
+//     }
+//   },
+// }).fields([
+//   { name: "cover_image", maxCount: 1 }, // ✅ Imagen de portada (máximo 1 archivo)
+//   { name: "file", maxCount: 1 }, // ✅ Archivo PDF del libro (máximo 1 archivo)
+// ]);
+
+
+// export default upload;
+
 import multer from "multer";
 import path from "path";
 import fs from "fs";
 import dotenv from "dotenv";
 
 dotenv.config();
-
 
 // 📌 Definir el directorio de subida
 const uploadDir = path.resolve(__dirname, "..", "uploads");
@@ -98,7 +149,7 @@ const upload = multer({
     if (allowedMimeTypes.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error("❌ Solo se permiten archivos PDF, JPG y PNG"));
+      cb(new Error("❌ Solo se permiten archivos PDF, JPG, PNG y CSV"));
     }
   },
 }).fields([
@@ -106,6 +157,4 @@ const upload = multer({
   { name: "file", maxCount: 1 }, // ✅ Archivo PDF del libro (máximo 1 archivo)
 ]);
 
-
 export default upload;
-
