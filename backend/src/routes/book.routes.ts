@@ -483,16 +483,19 @@ interface AuthRequest extends Request {
 const router = Router();
 
 // ✅ Middleware de manejo de `multer`
+// ✅ Middleware de manejo de `multer`
 const handleUpload = (req: Request, res: Response, next: NextFunction) => {
-  upload(req, res, (err: any) => {
+  upload.single("file")(req, res, (err: any) => {
     if (err instanceof multer.MulterError) {
       return res.status(400).json({ message: "Error al subir el archivo: " + err.message });
     } else if (err) {
       return res.status(500).json({ message: "Error de servidor al subir archivos" });
     }
-    next();
+    next(); // ✅ Llama a `next()` solo si no hay errores
   });
 };
+
+
 
 // ✅ Obtener todos los libros
 router.get("/", getBooks);
@@ -537,80 +540,79 @@ router.get("/file/download/:fileName", async (req: Request, res: Response) => {
 });
 
 // 📌 Subir un archivo CSV y agregar libros masivamente
-router.post(
-  "/upload-csv",
-  authenticateToken,
-  handleUpload,
-  async (req: AuthRequest, res: Response) => {
-    try {
-      if (!req.user || req.user.rol !== "admin") {
-        res.status(403).json({ message: "No tienes permisos para subir libros en masa." });
+router.post("/upload-csv", authenticateToken, upload.single("file"), async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    if (!req.user || req.user.rol !== "admin") {
+      res.status(403).json({ message: "No tienes permisos para subir libros en masa." });
+      return;
+    }
+
+    if (!req.file || !req.file.path) { // ✅ Verifica que `req.file.path` exista
+      res.status(400).json({ message: "No se ha subido ningún archivo CSV válido." });
+      return;
+    }
+
+    const filePath = req.file.path; // 📂 Ruta del archivo CSV en `uploads/`
+    const books: any[] = [];
+
+    // 📌 Leer el archivo CSV
+    fs.createReadStream(filePath)
+      .on("error", (error) => {
+        console.error("❌ Error al leer el archivo CSV:", error);
+        res.status(500).json({ message: "Error al procesar el archivo CSV." });
         return;
-      }
+      })
+      .pipe(csv())
+      .on("data", (row) => {
+        books.push(row);
+      })
+      .on("end", async () => {
+        if (books.length === 0) {
+          res.status(400).json({ message: "El archivo CSV está vacío." });
+          return;
+        }
 
-      const uploadedFiles = req.files as { [fieldname: string]: Express.Multer.File[] };
-      if (!uploadedFiles?.file?.[0]) {
-        res.status(400).json({ message: "No se ha subido ningún archivo." });
-        return;
-      }
+        try {
+          // 📌 Construir la consulta de inserción masiva
+          const values = books.map((book) => [
+            book.title || "",
+            book.author || "",
+            book.genre || "",
+            book.description || "",
+            parseInt(book.published_year, 10) || null,
+            book.cover_image_url || "", // ✅ Usa URLs directas
+            book.file_url || "", // ✅ Usa URLs directas
+          ]);
 
-      console.log("✅ Archivo recibido:", req.file);
-
-
-      const filePath = uploadedFiles.file[0].path;
-      const books: any[] = [];
-
-      // 📌 Leer el archivo CSV
-      fs.createReadStream(filePath)
-        .pipe(csv())
-        .on("data", (row) => {
-          books.push(row);
-        })
-        .on("end", async () => {
-          if (books.length === 0) {
-            res.status(400).json({ message: "El archivo CSV está vacío." });
-            return;
-          }
-
-          try {
-            // 📌 Construir la consulta de inserción masiva
-            const values = books.map((book) => [
-              book.title || "",
-              book.author || "",
-              book.genre || "",
-              book.description || "",
-              parseInt(book.published_year, 10) || null,
-              book.cover_image_url || "",
-              book.file_url || "",
-            ]);
-
-            const query = format(
-              `
+          const query = format(`
             INSERT INTO books (title, author, genre, description, published_year, cover_image_url, file_url)
             VALUES %L RETURNING id
-          `,
-              values
-            );
+          `, values);
 
-            await pool.query(query);
+          await pool.query(query);
 
-            res.status(201).json({ message: `📚 Se han agregado ${books.length} libros correctamente.` });
-          } catch (error) {
-            console.error("❌ Error al insertar los libros:", error);
-            res.status(500).json({ message: "Error al procesar los datos del CSV." });
-          } finally {
-            // ✅ Eliminar el archivo CSV después de procesarlo
-            fs.unlink(filePath, (err) => {
-              if (err) console.error("❌ Error al eliminar el archivo CSV:", err);
-            });
-          }
-        });
-    } catch (error) {
-      console.error("❌ Error al subir y procesar el archivo CSV:", error);
-      res.status(500).json({ message: "Error interno del servidor." });
-    }
+          res.status(201).json({ message: `📚 Se han agregado ${books.length} libros correctamente.` });
+          return;
+        } catch (error) {
+          console.error("❌ Error al insertar los libros:", error);
+          res.status(500).json({ message: "Error al procesar los datos del CSV." });
+          return;
+        } finally {
+          // ✅ Eliminar el archivo CSV después de procesarlo
+          fs.unlink(filePath, (err) => {
+            if (err) console.error("❌ Error al eliminar el archivo CSV:", err);
+          });
+        }
+      });
+
+  } catch (error) {
+    console.error("❌ Error al subir y procesar el archivo CSV:", error);
+    res.status(500).json({ message: "Error interno del servidor." });
+    return;
   }
-);
+});
+
+
 
 
 export default router;
