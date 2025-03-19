@@ -38,7 +38,7 @@ body {
     /* background: linear-gradient(45deg, rgb(203, 120, 229), #1e81a6, #232232, #5c2c7b);
   background-size: 400% 400%;
   animation: gradientBackground 15s ease infinite; */
-background-color: #232232;
+background-color: #ffffff;
     padding: 20px;
   }
   
@@ -56,7 +56,7 @@ background-color: #232232;
     font-weight: bold;
     margin-bottom: 20px;
     animation: fadeInUp 1.2s ease-in-out;
-    color: white;
+    color: rgb(0, 0, 0);
   }
   
   .login-left p {

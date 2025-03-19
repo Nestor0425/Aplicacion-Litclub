@@ -1,34 +1,16 @@
-// import { AppBar, Toolbar, Typography, Button, Box } from "@mui/material";
-// import { Link } from "react-router-dom";
-// import "../styles/Navbar.css"; // ✅ Importa los estilos
-
-// const Navbar = () => {
-//   return (
-//     <AppBar position="static" className="navbar">
-//       <Toolbar className="navbar-toolbar">
-//         <Typography variant="h6" className="navbar-title">
-//           LitClub
-//         </Typography>
-//         <Box className="navbar-buttons">
-//           <Button className="navbar-button" component={Link} to="/dashboard">Inicio</Button>
-//           <Button className="navbar-button" component={Link} to="/login">Login</Button>
-//         </Box>
-//       </Toolbar>
-//     </AppBar>
-//   );
-// };
-
-// export default Navbar;
-
 // import { AppBar, Toolbar, Button, Typography, Menu, MenuItem, IconButton, Box } from '@mui/material';
 // import { AccountCircle } from '@mui/icons-material';
-// import { useState } from 'react';
-
-// // Puedes usar la fuente importada en el archivo index.css o directamente aquí
-
+// import { useState, useContext } from 'react';
+// import { useNavigate } from 'react-router-dom';
+// import { AuthContext } from '../context/AuthContext';
 
 // const Navbar = () => {
 //   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+//   const navigate = useNavigate();
+//   const authContext = useContext(AuthContext); // ✅ Obtenemos el contexto de autenticación
+
+//   const user = authContext?.user || null;
+//   const logout = authContext?.logout || (() => {});
 
 //   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
 //     setAnchorEl(event.currentTarget);
@@ -38,46 +20,64 @@
 //     setAnchorEl(null);
 //   };
 
+//   const handleLogout = () => {
+//     logout(); // ✅ Cerrar sesión
+//     handleClose();
+//     navigate("/login"); // ✅ Redirigir al login después de cerrar sesión
+//   };
+
 //   return (
 //     <Box sx={{ position: 'sticky', top: 0, zIndex: 1100 }}>
-//       <AppBar
-//         position="sticky"
-//         sx={{
-//           backgroundColor: '#232232', // Color personalizado
-//           boxShadow: 3,
-//         }}
-//       >
+//       <AppBar position="sticky" sx={{ backgroundColor: 'black', boxShadow: 3 }}>
 //         <Toolbar>
-//           {/* Imagen en lugar del icono */}
-//           <Box component="img" src="/logo.png" alt="Logo" sx={{ width: 40, height: 40, mr: 2 }} />
+//           {/* Logo */}
+//           <Box
+//             component="img"
+//             src="/logo.png"
+//             alt="Logo"
+//             sx={{ width: 40, height: 40, mr: 2, cursor: "pointer" }}
+//             onClick={() => navigate("/")}
+//           />
 
-//           {/* Título con tipografía personalizada */}
-//           <Typography variant="h6" sx={{ flexGrow: 1, fontFamily: 'Varela Round, sans-serif' }}>
+//           {/* Título */}
+//           <Typography
+//             variant="h6"
+//             sx={{ flexGrow: 1, fontFamily: 'Varela Round, sans-serif', cursor: "pointer" }}
+//             onClick={() => navigate("/")}
+//           >
 //             LitClub
 //           </Typography>
 
-//           {/* Botones del Navbar */}
-//           <Button color="inherit" sx={{ ':hover': { color: '#c4aecf' } }}>Inicio</Button>
-//           <Button color="inherit" sx={{ ':hover': { color: '#c4aecf' } }}>Acerca de</Button>
-//           <Button color="inherit" sx={{ ':hover': { color: '#c4aecf' } }}>Contacto</Button>
+//           {/* Botones de Navegación */}
+//           <Button color="inherit" sx={{ ':hover': { color: '#c4aecf' } }} onClick={() => navigate("/")}>
+//   Inicio
+// </Button>
 
-//           {/* Botón de perfil con menú desplegable */}
-//           <IconButton
-//             color="inherit"
-//             onClick={handleMenu}
-//           >
-//             <AccountCircle />
-//           </IconButton>
+//           <Button color="inherit" sx={{ ':hover': { color: '#c4aecf' } }} onClick={() => navigate("/about")}>
+//             Acerca de LitClub
+//           </Button>
+//           <Button color="inherit" sx={{ ':hover': { color: '#c4aecf' } }} onClick={() => navigate("/contact")}>
+//             Contacto
+//           </Button>
 
-//           {/* Menú desplegable */}
-//           <Menu
-//             anchorEl={anchorEl}
-//             open={Boolean(anchorEl)}
-//             onClose={handleClose}
-//           >
-//             <MenuItem onClick={handleClose}>Perfil</MenuItem>
-//             <MenuItem onClick={handleClose}>Cerrar sesión</MenuItem>
-//           </Menu>
+//           {/* Mostrar solo si el usuario está autenticado */}
+//           {user ? (
+//             <>
+//               <IconButton color="inherit" aria-label="Abrir menú de usuario" onClick={handleMenu}>
+//                 <AccountCircle />
+//               </IconButton>
+
+//               {/* Menú desplegable */}
+//               <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+//                 <MenuItem onClick={() => { handleClose(); navigate("/profile"); }}>Perfil</MenuItem>
+//                 <MenuItem onClick={handleLogout}>🚪 Cerrar sesión</MenuItem>
+//               </Menu>
+//             </>
+//           ) : (
+//             <Button color="inherit" sx={{ ':hover': { color: '#c4aecf' } }} onClick={() => navigate("/login")}>
+//               Iniciar Sesión
+//             </Button>
+//           )}
 //         </Toolbar>
 //       </AppBar>
 //     </Box>
@@ -87,12 +87,17 @@
 // export default Navbar;
 import { AppBar, Toolbar, Button, Typography, Menu, MenuItem, IconButton, Box } from '@mui/material';
 import { AccountCircle } from '@mui/icons-material';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../context/AuthContext';
 
 const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const navigate = useNavigate(); // ✅ Navegación con React Router
+  const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
+
+  const user = authContext?.user || null;
+  const logout = authContext?.logout || (() => {});
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -102,15 +107,15 @@ const Navbar = () => {
     setAnchorEl(null);
   };
 
+  const handleLogout = () => {
+    logout();
+    handleClose();
+    navigate("/login");
+  };
+
   return (
     <Box sx={{ position: 'sticky', top: 0, zIndex: 1100 }}>
-      <AppBar
-        position="sticky"
-        sx={{
-          backgroundColor: '#232232', // Color personalizado
-          boxShadow: 3,
-        }}
-      >
+      <AppBar position="sticky" sx={{ backgroundColor: 'black', boxShadow: 3 }}>
         <Toolbar>
           {/* Logo */}
           <Box
@@ -130,35 +135,61 @@ const Navbar = () => {
             LitClub
           </Typography>
 
-          {/* Botones de Navegación */}
-          <Button color="inherit" sx={{ ':hover': { color: '#c4aecf' } }} onClick={() => navigate("/")}>
-            Inicio
-          </Button>
-          <Button color="inherit" sx={{ ':hover': { color: '#c4aecf' } }} onClick={() => navigate("/about")}>
-            Acerca de
-          </Button>
-          <Button color="inherit" sx={{ ':hover': { color: '#c4aecf' } }} onClick={() => navigate("/contact")}>
-            Contacto
-          </Button>
+          {/* 📌 Ocultar los botones de navegación si el usuario es admin */}
+          {!user?.rol || user.rol !== "admin" ? (
+            <>
+              <Button color="inherit" sx={{ ':hover': { color: '#c4aecf' } }} onClick={() => navigate("/")}>
+                Inicio
+              </Button>
+              <Button color="inherit" sx={{ ':hover': { color: '#c4aecf' } }} onClick={() => navigate("/about")}>
+                Acerca de LitClub
+              </Button>
+              <Button color="inherit" sx={{ ':hover': { color: '#c4aecf' } }} onClick={() => navigate("/contact")}>
+                Contacto
+              </Button>
+            </>
+          ) : null}
 
-          {/* Botón de Perfil con Menú */}
-          <IconButton
-            color="inherit"
-            aria-label="Abrir menú de usuario"
-            onClick={handleMenu}
-          >
-            <AccountCircle />
-          </IconButton>
+          {/* 📌 Botón de Dashboard (visible solo si está autenticado) */}
+          {user && (
+            <Button variant="contained" color="info" sx={{ ml: 2 }} onClick={() => navigate("/dashboard")}>
+              Dashboard
+            </Button>
+          )}
 
-          {/* Menú desplegable */}
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-            <MenuItem onClick={() => { handleClose(); navigate("/profile"); }}>Perfil</MenuItem>
-            <MenuItem onClick={() => { handleClose(); navigate("/logout"); }}>Cerrar sesión</MenuItem>
-          </Menu>
+          {/* 📌 Botones de administrador (visible solo si el usuario es admin) */}
+          {user?.rol === "admin" && (
+            <Box sx={{ display: "flex", gap: 2, ml: 3 }}>
+              <Button variant="contained" color="secondary" onClick={() => navigate("/upload-books")}>
+                Subir Libros CSV
+              </Button>
+              <Button variant="contained" color="primary" onClick={() => navigate("/edit-books")}>
+                Editar Libros
+              </Button>
+              <Button variant="contained" color="warning" onClick={() => navigate("/logs")}>
+                Ver Logs
+              </Button>
+            </Box>
+          )}
+
+          {/* 📌 Menú de usuario */}
+          {user ? (
+            <>
+              <IconButton color="inherit" aria-label="Abrir menú de usuario" onClick={handleMenu}>
+                <AccountCircle />
+              </IconButton>
+
+              {/* Menú desplegable */}
+              <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose}>
+                <MenuItem onClick={() => { handleClose(); navigate("/profile"); }}>Perfil</MenuItem>
+                <MenuItem onClick={handleLogout}>Cerrar sesión</MenuItem>
+              </Menu>
+            </>
+          ) : (
+            <Button color="inherit" sx={{ ':hover': { color: '#c4aecf' } }} onClick={() => navigate("/login")}>
+              Iniciar Sesión
+            </Button>
+          )}
         </Toolbar>
       </AppBar>
     </Box>

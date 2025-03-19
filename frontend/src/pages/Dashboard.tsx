@@ -470,6 +470,7 @@ import {
 import axios from "axios";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement } from "chart.js";
 
+
 // 📌 Registrar componentes necesarios de Chart.js
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement);
 
@@ -492,8 +493,9 @@ interface Book {
 }
 
 const Dashboard = () => {
-  const { user, logout } = useContext(AuthContext) || { user: null, logout: () => {} };
+  const { user } = useContext(AuthContext) || { user: null, logout: () => {} };
   const navigate = useNavigate();
+  const [totalLibros, setTotalLibros] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [, setBooks] = useState<Book[]>([]);
@@ -514,17 +516,53 @@ const Dashboard = () => {
     severity: "success" as AlertColor,
   });
 
+  // useEffect(() => {
+  //   if (!user) {
+  //     navigate("/login");
+  //     return;
+  //   }
+
+  //   if (user.rol !== "admin") {
+  //     navigate("/user-dashboard");
+  //     return;
+  //   }
+
+  //   const fetchBooks = async () => {
+  //     const storedBooks = sessionStorage.getItem("books");
+  //     if (storedBooks) {
+  //       setBooks(JSON.parse(storedBooks));
+  //       setLoading(false);
+  //       return;
+  //     }
+
+  //     try {
+  //       const res = await axios.get<Book[]>(`${import.meta.env.VITE_API_URL}/books`);
+  //       setBooks(res.data);
+  //       sessionStorage.setItem("books", JSON.stringify(res.data));
+  //     } catch (error) {
+  //       console.error("Error obteniendo libros:", error);
+  //       setError("No se pudieron cargar los libros. Intenta de nuevo más tarde.");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchBooks();
+  // }, [navigate, user]);
+
+  // 📌 Manejar cambios en los inputs de texto
+  
   useEffect(() => {
     if (!user) {
       navigate("/login");
       return;
     }
-
+  
     if (user.rol !== "admin") {
       navigate("/user-dashboard");
       return;
     }
-
+  
     const fetchBooks = async () => {
       const storedBooks = sessionStorage.getItem("books");
       if (storedBooks) {
@@ -532,7 +570,7 @@ const Dashboard = () => {
         setLoading(false);
         return;
       }
-
+  
       try {
         const res = await axios.get<Book[]>(`${import.meta.env.VITE_API_URL}/books`);
         setBooks(res.data);
@@ -544,11 +582,22 @@ const Dashboard = () => {
         setLoading(false);
       }
     };
-
+  
+    const fetchTotalBooks = async () => {
+      try {
+        const response = await axios.get<{ totalLibros: number }>(`${import.meta.env.VITE_API_URL}/stats/total-books`);
+        setTotalLibros(response.data.totalLibros);
+      } catch (error) {
+        console.error("Error obteniendo total de libros:", error);
+      }
+    };
+    
+  
     fetchBooks();
+    fetchTotalBooks();
   }, [navigate, user]);
-
-  // 📌 Manejar cambios en los inputs de texto
+  
+  
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setForm((prevForm) => ({
@@ -611,10 +660,6 @@ const Dashboard = () => {
     }
   };
 
-     const hadleViewLogs = () => {
-     navigate("/logs");
-   };
-
   return (
     <Container sx={{ textAlign: "center", marginTop: 5 }}>
       <Typography variant="h3">📊 Dashboard</Typography>
@@ -630,28 +675,19 @@ const Dashboard = () => {
         </Typography>
       ) : (
         <>
-          <Box sx={{ marginTop: 3 }}>
-            <Button variant="contained" color="secondary" onClick={() => navigate("/upload-books")}>
-              📂 Subir Libros CSV
-            </Button>
-            <Button variant="contained" color="primary" sx={{ marginLeft: 2 }} onClick={() => navigate("/edit-books")}>
-              ✏️ Editar Libros
-            </Button>
-          </Box>
-          {user?.rol === "admin" && (
-             <Button
-               variant="contained"
-               color="secondary"
-               sx={{ marginTop: 3 }}
-              onClick={hadleViewLogs}
-            >
-               📜 Ver Logs
-            </Button>
-           )}
+          
 
-          <Button variant="contained" color="error" sx={{ marginTop: 3 }} onClick={() => { logout(); navigate("/login"); }}>
-            🚪 Cerrar Sesión
-          </Button>
+          <Box sx={{ padding: 4 }}>
+      <Paper sx={{ padding: 3, textAlign: "center", backgroundColor: "#f4f4f4", boxShadow: 3 }}>
+        <Typography variant="h4" sx={{ fontWeight: "bold", color: "#333" }}>
+          📚 Total de Libros Registrados
+        </Typography>
+        <Typography variant="h2" sx={{ color: "#2b87a9", marginTop: 2 }}>
+          {totalLibros}
+        </Typography>
+      </Paper>
+    </Box>
+
 
           {/* 📌 Formulario para Agregar Libros */}
           <Paper sx={{ padding: 3, marginTop: 4 }}>

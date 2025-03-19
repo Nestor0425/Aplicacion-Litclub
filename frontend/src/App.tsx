@@ -77,7 +77,9 @@ import ReadBook from "./pages/ReadBook";
 import BookViewer from "./pages/BookViewer";
 import EditBooksPage from "./pages/EditBooksPage";
 import UploadBooksPage from "./pages/UploadBooksPage";
-import Inicio from "./pages/Inicio";
+import Inicio from "./pages/HomePage";
+import About from "./pages/AboutPage";
+import Contact from "./pages/Contact";
 
 const ProtectedRoute = ({ element }: { element: JSX.Element }) => {
   const auth = useContext(AuthContext);
@@ -96,10 +98,12 @@ const App = () => {
           <Router>
             <NavbarWrapper /> {/* ✅ Controla la visibilidad del Navbar */}
             <Routes>
-              <Route path="/" element={<Navigate to="/login" replace />} />
+              <Route path="/" element={<Navigate to="/inicio" replace />} />
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/inicio" element={<Inicio />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
               <Route path="/user-dashboard" element={<UserDashboard />} />
               <Route path="/logs" element={<ProtectedRoute element={<Logs />} />} />

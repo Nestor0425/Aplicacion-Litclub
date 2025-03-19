@@ -1,7 +1,7 @@
 
 /* 📌 Barra de navegación con fondo degradado */
 .navbar {
-    background-color: white !important;
+    background-color: rgb(0, 0, 0) !important;
     box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
     padding: 3px;
   }

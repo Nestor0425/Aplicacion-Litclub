@@ -12,6 +12,7 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
+import { Provider } from "./components/ui/provider.tsx";
 
 console.log("🌎 Backend en:", import.meta.env.VITE_API_URL);
 
@@ -22,7 +23,10 @@ const rootElement = document.getElementById("root");
 if (rootElement) {
   createRoot(rootElement).render(
     <StrictMode>
-      <App />
+      <Provider>
+        <App />
+      </Provider>
+      
     </StrictMode>
   );
 } else {

@@ -219,6 +219,7 @@ import userRoutes from "./routes/user.routes";
 import logsRoutes from "./routes/logs.routes";
 import dashboardRoutes from "./routes/dashboard.routes";
 import bookRoutes from "./routes/book.routes";
+import statsRoutes from "./routes/stats.routes";
 
 import dotenv from "dotenv";
 dotenv.config();
@@ -284,6 +285,7 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/logs", logsRoutes);
 app.use("/dashboard", dashboardRoutes);
+app.use("/stats", statsRoutes);
 app.use("/books", bookRoutes);
 
 // 📌 Servir archivos estáticos (PDFs, imágenes, etc.)
