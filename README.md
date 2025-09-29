@@ -96,7 +96,7 @@ Redirección a login si el usuario no está autenticado.
 Páginas de error 404 y 500 personalizadas.
 
 🧑‍💻 Manual de Usuario
-1. Inicio de sesión
+🔑 Inicio de sesión
 
 Dirígete a la página principal.
 
@@ -110,13 +110,13 @@ Ejemplo admin:
 
 🔑 Preuba1-
 
-2. Registro de usuario
+📝 Registro de usuario
 
 Completa nombre, correo y contraseña.
 
 Haz clic en Registrarse.
 
-3. Dashboard
+📂 Dashboard
 
 Subir libros desde CSV.
 
@@ -124,25 +124,25 @@ Editar libros existentes.
 
 Cerrar sesión.
 
-4. Agregar un nuevo libro
+➕ Agregar un nuevo libro
 
 Completa los campos: título, autor, descripción, año, género, URL de portada y PDF.
 
 Haz clic en Agregar Libro.
 
-5. Editar libros
+✏️ Editar libros
 
 Selecciona el libro en el dashboard.
 
 Modifica y guarda, o elimina el libro.
 
-6. Subir libros desde un archivo CSV
+📤 Subir libros desde un archivo CSV
 
 Selecciona el archivo CSV.
 
 Haz clic en Subir CSV.
 
-7. Cerrar sesión
+🔒 Cerrar sesión
 
 Haz clic en Cerrar Sesión en el dashboard.
 
@@ -151,4 +151,3 @@ Haz clic en Cerrar Sesión en el dashboard.
 Se realizaron pruebas de autenticación, manejo de errores y subida de libros.
 
 Validación de seguridad siguiendo prácticas OWASP.
-
